@@ -1,7 +1,9 @@
-import { createSelector } from '@ngrx/store';
+import {createFeatureSelector, createSelector} from '@ngrx/store';
 
 import { Hero } from '../../core/hero';
 import { HeroState } from './hero.reducer';
+
+export const getHeroState = createFeatureSelector<HeroState>('hero');
 
 export interface AppState {
   hero: HeroState;

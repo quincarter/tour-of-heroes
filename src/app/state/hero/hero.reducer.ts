@@ -1,33 +1,56 @@
 import { Hero } from '../../core/hero';
 
 import * as heroActions from './hero.actions';
+import {createEntityAdapter, EntityAdapter, EntityState} from '@ngrx/entity';
 
-export interface HeroState {
-  heroes: Hero[];
-  hero: Hero;
+export interface HeroState extends EntityState<Hero> {
+  // additional hero properties.
+  selectedId: number;
+  loading: boolean;
+  error: string;
 }
 
-export const initialState: HeroState = {
-  heroes: [],
-  hero: null
-};
+export const heroAdapter: EntityAdapter<Hero> = createEntityAdapter<Hero>();
+export const initialHeroState: HeroState = heroAdapter.getInitialState({
+  selectedId: null,
+  loading: false,
+  error: ''
+});
 
 export function heroReducer(
-  state = initialState,
+  state = initialHeroState,
   action: heroActions.HeroActions
 ): HeroState {
   switch (action.type) {
-    case heroActions.HeroActionTypes.SearchAllHeroEntitiesSuccess: {
+    case heroActions.HeroActionTypes.SearchAllHeroEntities: {
       return {
-        hero: null,
-        heroes: action.payload.result
+        ...heroAdapter.removeAll(state),
+        loading: true,
+        error: ''
+      };
+    }
+    case heroActions.HeroActionTypes.LoadHeroById: {
+      return {
+        ...heroAdapter.removeAll(state),
+        selectedId: action.payload.id,
+        loading: true,
+        error: ''
       };
     }
 
     case heroActions.HeroActionTypes.LoadHeroByIdSuccess: {
       return {
-        heroes: [],
-        hero: action.payload.result
+        ...heroAdapter.addOne(action.payload.result, state),
+        loading: false,
+        error: ''
+      };
+    }
+
+    case heroActions.HeroActionTypes.LoadHeroByIdFail: {
+      return {
+        ...state,
+        loading: false,
+        error: 'Hero load failed: ' + action.payload.error
       };
     }
 
