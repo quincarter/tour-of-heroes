@@ -1,12 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { Store, select } from '@ngrx/store';
-
-import { SearchAllHeroEntities } from './../../../../state/hero/hero.actions';
-import { heroes } from '../../../../state/hero';
-import { AppState } from '../../../../state/app.interfaces';
-import { Hero } from '../../../../core/hero';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {Hero} from '../../../../core/hero';
+import {HeroService} from '../../../../core/hero.service';
 
 @Component({
   selector: 'app-heroes',
@@ -16,9 +12,9 @@ import { Hero } from '../../../../core/hero';
 export class HeroesComponent {
   heroes$: Observable<Hero[]>;
 
-  constructor(private store: Store<AppState>, private router: Router) {
-    this.heroes$ = this.store.pipe(select(heroes));
-    this.store.dispatch(new SearchAllHeroEntities());
+  constructor(private heroSerivce: HeroService, private router: Router) {
+    this.heroes$ = this.heroSerivce.heroes$;
+    this.heroSerivce.loadHeroes();
   }
 
   onHeroClicked(hero: Hero) {

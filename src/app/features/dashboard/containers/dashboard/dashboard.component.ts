@@ -7,6 +7,7 @@ import { SearchAllHeroEntities } from './../../../../state/hero/hero.actions';
 import { topHeroes } from '../../../../state/hero';
 import { AppState } from '../../../../state/app.interfaces';
 import { Hero } from '../../../../core/hero';
+import {HeroService} from '../../../../core/hero.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,9 +17,9 @@ import { Hero } from '../../../../core/hero';
 export class DashboardComponent {
   heroes$: Observable<Hero[]>;
 
-  constructor(private store: Store<AppState>, private router: Router) {
-    this.heroes$ = this.store.pipe(select(topHeroes));
-    this.store.dispatch(new SearchAllHeroEntities());
+  constructor(private heroSerivce: HeroService, private router: Router) {
+    this.heroes$ = this.heroSerivce.topHeroes$;
+    this.heroSerivce.loadHeroes();
   }
 
   onHeroClicked(hero: Hero) {
